@@ -13,13 +13,24 @@ export default class extends Phaser.State {
         this.physics.enable(this.player);
         this.player.body.collideWorldBounds = true;
 
-        this.player.anchor.setTo(0.5, 0.5);
+        this.weapon = this.game.add.weapon(30, 'star');
+        this.weapon.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;
+        this.weapon.bulletSpeed = 400;
+        this.weapon.fireRate = 120;
+        this.weapon.bulletAngleVariance = 2;
+        this.weapon.trackSprite(this.player);
     }
 
     update() {
 
-        // this.physics.arcade.moveToPointer(this.player, 60, this.input.activePointer, 300);
-        this.player.rotation = this.physics.arcade.moveToPointer(this.player, 60, this.input.activePointer, 500);
+        let mouseX = this.input.activePointer.x;
+        this.physics.arcade.moveToXY(this.player, mouseX, 800, 600, 300);
+        if (this.input.mousePointer.isDown) {
+            this.weapon.fireAtPointer(this.input.mousePointer);
+        }
+    }
 
+    render() {
+        this.weapon.debug();
     }
 }
