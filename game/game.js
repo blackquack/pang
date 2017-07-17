@@ -20,13 +20,18 @@ export default class extends Phaser.State {
         this.weapon.bulletAngleVariance = 2;
         this.weapon.trackSprite(this.player);
 
+
+        this.monsterGroup = this.game.add.group();
         this.monster = this.add.sprite(32, 0, 'monster')
         this.monster.health = 10;
+        this.monster.lives = this.monster.health;
         this.physics.enable(this.monster)
         this.monster.body.gravity.y = 500;
         this.monster.body.collideWorldBounds = true;
         this.monster.body.bounce.set(1);
         this.monster.body.velocity.set(200, 60);
+        this.monsterGroup.add(this.monster);
+
     }
 
     update() {
@@ -40,7 +45,7 @@ export default class extends Phaser.State {
             console.log("PLAYER HIT")
         }
 
-        this.physics.arcade.overlap(this.monster, this.weapon.bullets, (m, b) => {
+        this.physics.arcade.overlap(this.monsterGroup, this.weapon.bullets, (m, b) => {
             m.tint = 0xff0000;
             setTimeout(() => {
                 m.tint = 0xffffff;
@@ -50,9 +55,38 @@ export default class extends Phaser.State {
 
             m.health -= 2;
             console.log(m.health)
+            //console.log(m.lives);
 
-            if (m.health === 0) {
-                m.kill()
+            if(m.lives === 2) {
+                m.lives -= 2;
+                m.kill();
+                return;
+            }
+
+            if (m.health === 0) { //split and kill
+                m.lives -= 2;
+
+                this.monster = this.add.sprite(m.x, m.y, 'monster')
+                this.monster.health = m.lives;
+                this.monster.lives = m.lives;
+                this.physics.enable(this.monster)
+                this.monster.body.gravity.y = 500;
+                this.monster.body.collideWorldBounds = true;
+                this.monster.body.bounce.set(1);
+                this.monster.body.velocity.set(-200, 60);
+                this.monsterGroup.add(this.monster);
+
+                this.monster = this.add.sprite(m.x, m.y, 'monster')
+                this.monster.health = m.lives;
+                this.monster.lives = m.lives;
+                this.physics.enable(this.monster)
+                this.monster.body.gravity.y = 500;
+                this.monster.body.collideWorldBounds = true;
+                this.monster.body.bounce.set(1);
+                this.monster.body.velocity.set(0, 0); //creates the split effect
+                this.monster.body.velocity.set(200, 60);
+                this.monsterGroup.add(this.monster);
+                m.kill();
             }
         })
 
