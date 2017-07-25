@@ -3,6 +3,9 @@ import Phaser from 'Phaser'
 import gameState from './game.js'
 
 let config = {
+    width: 800,
+    height: 600,
+    renderer: Phaser.AUTO,
 }
 
 let game = new Phaser.Game(config)
