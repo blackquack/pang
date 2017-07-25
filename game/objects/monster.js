@@ -2,7 +2,11 @@ let monster = null;
 
 export default {
     create: ({ game, x = 32, y = 600, lives = 3 }) => {
+        //visual
         monster = game.add.sprite(x, y, 'monster')
+        monster.scale.setTo(lives, lives);
+
+        // game
         monster.lives = lives; // lives indicated their size/level
         monster.health = 10 * monster.lives;
 
