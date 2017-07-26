@@ -3,7 +3,7 @@ const path = require('path');
 module.exports = {
     entry: './game/index.js',
     output: {
-        path: path.resolve(__dirname, 'dist'),
+        path: path.resolve(__dirname, 'docs'),
         filename: 'dist.js'
     },
     devServer: {

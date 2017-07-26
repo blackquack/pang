@@ -12,7 +12,7 @@
   "version": "1.0.0",
   "main": "webpack.config.js",
   "scripts": {
-    "start": "webpack && http-server ./dist -o",
+    "start": "webpack && http-server ./docs -o -p 3000",
     "dev": "webpack-dev-server --open",
     "build": "webpack",
     "test": "echo \"Error: no test specified\" && exit 1"
