@@ -28,11 +28,11 @@ export default {
             }
             if (!m.alive) {
                 let m1 = monster.create({ game, x: m.x, y: m.y, lives: m.lives - 1 })
-                m1.body.velocity.set(-200, 60);
+                m1.body.velocity.set(-200, _.random(-200, 200));
                 game.monsterGroup.add(m1);
 
-                let m2 = monster.create({ game, x: m.x, y: m.y })
-                m2.body.velocity.set(200, 60);
+                let m2 = monster.create({ game, x: m.x, y: m.y, lives: m.lives - 1 })
+                m2.body.velocity.set(200, _.random(-200, 200));
                 game.monsterGroup.add(m2);
 
                 m.kill();
