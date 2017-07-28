@@ -8,19 +8,26 @@ export default {
         // game
         monster.lives = lives; // lives indicated their size/level
         monster.health = 10 * monster.lives;
-        monster.maxVelocity = ((-1 / (lives + 2)) + 1) * 750;  // a limit function
+        monster.targetVelocity = ((-1 / (lives + 2)) + 1) * 750;  // a limit function for max height
 
         // physics
         game.physics.enable(monster)
         monster.body.gravity.y = 500;
         monster.body.collideWorldBounds = true;
         monster.body.bounce.set(1);
-        monster.body.maxVelocity.set(monster.maxVelocity); // set a max velocity to limit max bounce height
+        monster.body.maxVelocity.set(monster.targetVelocity); // set a max velocity to limit max bounce height
 
         let xVelocity = _.shuffle([200, 100, -100, -200])[0];
-        let yVelocity = monster.maxVelocity;
+        let yVelocity = monster.targetVelocity;
         monster.body.velocity.set(xVelocity, -yVelocity);
 
         return monster;
+    },
+    update: ({ monster }) => {
+        // always bounce to right height
+        if (monster.body.onFloor()) {
+            let diffVelocity = Math.floor(monster.targetVelocity -  Math.abs(monster.body.velocity.y));
+            monster.body.velocity.set(monster.body.velocity.x, monster.body.velocity.y - diffVelocity);
+        }
     }
 }

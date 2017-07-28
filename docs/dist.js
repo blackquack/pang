@@ -69,26 +69,37 @@
 
 "use strict";
 let monster = null;
-
 /* harmony default export */ __webpack_exports__["a"] = ({
-        create: ({ game, x = 32, y = 600, lives = 3 }) => {
-                //visual
-                monster = game.add.sprite(x, y, 'monster');
-                monster.scale.setTo(lives, lives);
+    create: ({ game, x = _.random(0, 600), y = 0, lives = 3 }) => {
+        //visual
+        monster = game.add.sprite(x, y, 'monster');
+        monster.scale.setTo(lives, lives);
 
-                // game
-                monster.lives = lives; // lives indicated their size/level
-                monster.health = 10 * monster.lives;
+        // game
+        monster.lives = lives; // lives indicated their size/level
+        monster.health = 10 * monster.lives;
+        monster.targetVelocity = (-1 / (lives + 2) + 1) * 750; // a limit function for max height
 
-                // physics
-                game.physics.enable(monster);
-                monster.body.gravity.y = 500;
-                monster.body.collideWorldBounds = true;
-                monster.body.bounce.set(1);
-                monster.body.velocity.set(200, 60);
+        // physics
+        game.physics.enable(monster);
+        monster.body.gravity.y = 500;
+        monster.body.collideWorldBounds = true;
+        monster.body.bounce.set(1);
+        monster.body.maxVelocity.set(monster.targetVelocity); // set a max velocity to limit max bounce height
 
-                return monster;
+        let xVelocity = _.shuffle([200, 100, -100, -200])[0];
+        let yVelocity = monster.targetVelocity;
+        monster.body.velocity.set(xVelocity, -yVelocity);
+
+        return monster;
+    },
+    update: ({ monster }) => {
+        // always bounce to right height
+        if (monster.body.onFloor()) {
+            let diffVelocity = Math.floor(monster.targetVelocity - Math.abs(monster.body.velocity.y));
+            monster.body.velocity.set(monster.body.velocity.x, monster.body.velocity.y - diffVelocity);
         }
+    }
 });
 
 /***/ }),
@@ -17309,6 +17320,7 @@ module.exports = Phaser;
 
         __WEBPACK_IMPORTED_MODULE_0__objects_player_js__["a" /* default */].update({ game: this, weapon: this.weapon });
         __WEBPACK_IMPORTED_MODULE_1__objects_weapon_js__["a" /* default */].update({ game: this, mGroup: this.monsterGroup, weapon: this.weapon });
+        this.monsterGroup.forEach(m => __WEBPACK_IMPORTED_MODULE_2__objects_monster_js__["a" /* default */].update({ monster: m }));
     }
 
     render() {
@@ -17384,11 +17396,11 @@ let weapon = null;
             }
             if (!m.alive) {
                 let m1 = __WEBPACK_IMPORTED_MODULE_0__monster_js__["a" /* default */].create({ game, x: m.x, y: m.y, lives: m.lives - 1 });
-                m1.body.velocity.set(-200, 60);
+                m1.body.velocity.set(-200, _.random(-200, 200));
                 game.monsterGroup.add(m1);
 
-                let m2 = __WEBPACK_IMPORTED_MODULE_0__monster_js__["a" /* default */].create({ game, x: m.x, y: m.y });
-                m2.body.velocity.set(200, 60);
+                let m2 = __WEBPACK_IMPORTED_MODULE_0__monster_js__["a" /* default */].create({ game, x: m.x, y: m.y, lives: m.lives - 1 });
+                m2.body.velocity.set(200, _.random(-200, 200));
                 game.monsterGroup.add(m2);
 
                 m.kill();

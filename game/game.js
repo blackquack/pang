@@ -15,24 +15,25 @@ export default class extends Phaser.State {
         this.camera.y = 400;
         this.add.sprite(0, 400, 'sky');
 
-        this.player = player.create({game: this})
-        this.weapon = weapon.create({game: this})
+        this.player = player.create({ game: this })
+        this.weapon = weapon.create({ game: this })
         this.weapon.trackSprite(this.player);
 
         this.monsterGroup = this.add.group();
-        this.monsterGroup.add(monster.create({game: this}));
+        this.monsterGroup.add(monster.create({ game: this }));
 
         this.cursors = this.input.keyboard.createCursorKeys();
     }
 
     update() {
-        if (this.cursors.up.isDown) 
+        if (this.cursors.up.isDown)
             this.camera.y -= 4;
-        else if (this.cursors.down.isDown) 
+        else if (this.cursors.down.isDown)
             this.camera.y += 4;
- 
-        player.update({game: this, weapon: this.weapon})
-        weapon.update({game: this, mGroup: this.monsterGroup, weapon: this.weapon})
+
+        player.update({ game: this, weapon: this.weapon })
+        weapon.update({ game: this, mGroup: this.monsterGroup, weapon: this.weapon })
+        this.monsterGroup.forEach(m => monster.update({ monster: m }) );
     }
 
     render() {
