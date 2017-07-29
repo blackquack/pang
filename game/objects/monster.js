@@ -2,11 +2,11 @@ let monster = null;
 export default {
     create: ({ game, x = _.random(0, 600), y = 0, lives = 3 }) => {
         //visual
-        monster = game.add.sprite(x, y, 'slime')
-        monster.scale.setTo(lives * 2);
-        // monster.anchor.set(0.5);
-        monster.animations.add('spin', _.range(11, 20));
-        monster.animations.play('spin', 10, true);
+        monster = game.add.sprite(x, y, 'blob')
+        monster.scale.setTo(lives);
+        monster.animations.add('go_up', [0, 2, 3]);
+        monster.animations.add('go_down', _.range(4, 8));
+        monster.animations.play('go_down', 10);
 
         // game
         monster.lives = lives; // lives indicated their size/level
@@ -15,7 +15,7 @@ export default {
 
         // physics
         game.physics.enable(monster);
-        monster.body.setSize(lives,lives)
+        monster.body.setSize(24, 30, 30, 25);
         monster.body.gravity.y = 500;
         monster.body.collideWorldBounds = true;
         monster.body.bounce.set(1);
@@ -28,13 +28,18 @@ export default {
         return monster;
     },
     update: ({ monster }) => {
-        // visual
-        // monster.angle += 1;
-
-        // always bounce to right height
         if (monster.body.onFloor()) {
+            // always bounce to right height
             let diffVelocity = Math.floor(monster.targetVelocity - Math.abs(monster.body.velocity.y));
             monster.body.velocity.set(monster.body.velocity.x, monster.body.velocity.y - diffVelocity);
+
+            // visual
+            monster.animations.play('go_up', 15);
+        }
+
+        // visual
+        if (_.inRange(monster.body.deltaY(), -1, 0)) {
+            monster.animations.play('go_down', 5);
         }
     }
 }
