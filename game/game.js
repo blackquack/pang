@@ -8,6 +8,7 @@ export default class extends Phaser.State {
         this.load.image('star', './assets/star.png');
         this.load.spritesheet('dude', './assets/dude.png', 32, 48);
         this.load.image('monster', './assets/orb-green.png');
+        this.load.spritesheet('slime', './assets/slime.png', 32, 32)
     }
 
     create() {
@@ -33,10 +34,11 @@ export default class extends Phaser.State {
 
         player.update({ game: this, weapon: this.weapon })
         weapon.update({ game: this, mGroup: this.monsterGroup, weapon: this.weapon })
-        this.monsterGroup.forEach(m => monster.update({ monster: m }) );
+        this.monsterGroup.forEach(m => monster.update({ monster: m }));
     }
 
     render() {
         this.weapon.debug();
+        this.monsterGroup.forEach(m => console.log(this.game.debug.body(m)));
     }
 }
