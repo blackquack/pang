@@ -72,32 +72,45 @@ let monster = null;
 /* harmony default export */ __webpack_exports__["a"] = ({
     create: ({ game, x = _.random(0, 600), y = 0, lives = 3 }) => {
         //visual
-        monster = game.add.sprite(x, y, 'monster');
-        monster.scale.setTo(lives, lives);
+        monster = game.add.sprite(x, y, 'blob');
+        monster.scale.setTo(lives);
+        monster.animations.add('go_up', [0, 1, 2]);
+        monster.animations.play('go_up', 15);
 
-        // game
-        monster.lives = lives; // lives indicated their size/level
+        //audio
+        monster.audio = {
+            pop: game.add.audio('pop'),
+            bounce: game.add.audio('bounce')
+
+            // game
+        };monster.lives = lives; // lives indicated their size/level
         monster.health = 10 * monster.lives;
-        monster.targetVelocity = (-1 / (lives + 2) + 1) * 750; // a limit function for max height
+        monster.targetVelocity = (-1 / (lives + 2) + 1) * 450; // a limit function for max height
 
         // physics
         game.physics.enable(monster);
-        monster.body.gravity.y = 500;
+        monster.body.setSize(24, 30, 30, 25);
+        monster.body.gravity.y = 250;
         monster.body.collideWorldBounds = true;
         monster.body.bounce.set(1);
         monster.body.maxVelocity.set(monster.targetVelocity); // set a max velocity to limit max bounce height
 
-        let xVelocity = _.shuffle([200, 100, -100, -200])[0];
+        let xVelocity = _.shuffle([200, -200])[0];
         let yVelocity = monster.targetVelocity;
         monster.body.velocity.set(xVelocity, -yVelocity);
 
         return monster;
     },
     update: ({ monster }) => {
-        // always bounce to right height
         if (monster.body.onFloor()) {
-            let diffVelocity = Math.floor(monster.targetVelocity - Math.abs(monster.body.velocity.y));
-            monster.body.velocity.set(monster.body.velocity.x, monster.body.velocity.y - diffVelocity);
+            // always bounce to right height
+            monster.body.velocity.set(monster.body.velocity.x, -monster.targetVelocity);
+
+            // visual
+            monster.animations.play('go_up', 15);
+
+            // audio
+            monster.audio.bounce.play();
         }
     }
 });
@@ -17297,7 +17310,9 @@ module.exports = Phaser;
         this.load.image('sky', './assets/sky.png');
         this.load.image('star', './assets/star.png');
         this.load.spritesheet('dude', './assets/dude.png', 32, 48);
-        this.load.image('monster', './assets/orb-green.png');
+        this.load.spritesheet('blob', './assets/monster.png', 80, 80);
+        this.load.audio('pop', './assets/pop.ogg');
+        this.load.audio('bounce', './assets/bounce.ogg');
     }
 
     create() {
@@ -17325,6 +17340,7 @@ module.exports = Phaser;
 
     render() {
         this.weapon.debug();
+        // this.monsterGroup.forEach(m => this.game.debug.body(m));
     }
 });
 
@@ -17392,18 +17408,20 @@ let weapon = null;
             m.damage(weapon.damage);
             if (!m.alive && m.lives === 1) {
                 m.kill();
+                m.audio.pop.play();
                 return;
             }
             if (!m.alive) {
                 let m1 = __WEBPACK_IMPORTED_MODULE_0__monster_js__["a" /* default */].create({ game, x: m.x, y: m.y, lives: m.lives - 1 });
-                m1.body.velocity.set(-200, _.random(-200, 200));
+                m1.body.velocity.set(-200, _.random(-200, 0));
                 game.monsterGroup.add(m1);
 
                 let m2 = __WEBPACK_IMPORTED_MODULE_0__monster_js__["a" /* default */].create({ game, x: m.x, y: m.y, lives: m.lives - 1 });
-                m2.body.velocity.set(200, _.random(-200, 200));
+                m2.body.velocity.set(200, _.random(-200, 0));
                 game.monsterGroup.add(m2);
 
                 m.kill();
+                m.audio.pop.play();
             }
         });
     }

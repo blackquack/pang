@@ -24,20 +24,20 @@ export default {
             m.damage(weapon.damage)
             if (!m.alive && m.lives === 1) {
                 m.kill();
+                m.audio.pop.play();
                 return;
             }
             if (!m.alive) {
                 let m1 = monster.create({ game, x: m.x, y: m.y, lives: m.lives - 1 })
-                m1.body.velocity.set(-200, _.random(-200, 200));
-                m1.animations.play('go_up', 15);
+                m1.body.velocity.set(-200, _.random(-200, 0));
                 game.monsterGroup.add(m1);
 
                 let m2 = monster.create({ game, x: m.x, y: m.y, lives: m.lives - 1 })
-                m2.body.velocity.set(200, _.random(-200, 200));
-                m2.animations.play('go_up', 15);
+                m2.body.velocity.set(200, _.random(-200, 0));
                 game.monsterGroup.add(m2);
 
                 m.kill();
+                m.audio.pop.play();
             }
         })
     }
