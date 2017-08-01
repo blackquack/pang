@@ -9,6 +9,8 @@ export default {
         weapon.fireRate = 120;
         weapon.bulletAngleVariance = 2;
         weapon.damage = 5;
+        weapon.audio = game.add.audio('shoot');
+
         return weapon;
 
     },

@@ -10,6 +10,7 @@ export default class extends Phaser.State {
         this.load.spritesheet('blob', './assets/monster.png', 80, 80);
         this.load.audio('pop', './assets/pop.ogg');
         this.load.audio('bounce', './assets/bounce.ogg');
+        this.load.audio('shoot', './assets/shoot.wav');
     }
 
     create() {
