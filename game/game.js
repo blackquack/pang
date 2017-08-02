@@ -6,11 +6,11 @@ export default class extends Phaser.State {
     preload() {
         this.load.image('sky', './assets/sky.png');
         this.load.image('star', './assets/star.png');
-        this.load.spritesheet('dude', './assets/dude.png', 32, 48);
         this.load.spritesheet('blob', './assets/monster.png', 80, 80);
         this.load.audio('pop', './assets/pop.ogg');
         this.load.audio('bounce', './assets/bounce.ogg');
         this.load.audio('shoot', './assets/shoot.wav');
+        this.load.spritesheet('cat', './assets/cat.png', 32, 32);
     }
 
     create() {
@@ -40,7 +40,8 @@ export default class extends Phaser.State {
     }
 
     render() {
-        this.weapon.debug();
+        // this.weapon.debug();
+        // this.game.debug.body(this.player)
         // this.monsterGroup.forEach(m => this.game.debug.body(m));
     }
 }

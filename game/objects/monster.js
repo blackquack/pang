@@ -1,10 +1,10 @@
 let monster = null;
 export default {
-    create: ({ game, x = _.random(0, 600), y = 0, lives = 3 }) => {
+    create: ({ game, x = _.random(0, 600), y = 0, lives = 4 }) => {
         //visual
         monster = game.add.sprite(x, y, 'blob')
         monster.scale.setTo(lives);
-        monster.animations.add('go_up', [0, 1, 2], );
+        monster.animations.add('go_up', [0, 1, 2] );
         monster.animations.play('go_up', 15);
 
         //audio
