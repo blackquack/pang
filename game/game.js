@@ -5,7 +5,7 @@ import monster from './objects/monster.js';
 export default class extends Phaser.State {
     preload() {
         this.load.image('sky', './assets/sky.png');
-        this.load.image('star', './assets/star.png');
+        this.load.spritesheet('projectile', './assets/projectile.png', 32, 32);
         this.load.spritesheet('blob', './assets/monster.png', 80, 80);
         this.load.audio('pop', './assets/pop.ogg');
         this.load.audio('bounce', './assets/bounce.ogg');

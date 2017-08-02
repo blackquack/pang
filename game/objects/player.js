@@ -9,7 +9,6 @@ export default {
         player.events
         player.anchor.setTo(0.5, 0.5);
 
-
         //physics
         game.physics.enable(player);
         player.body.collideWorldBounds = true;
@@ -25,10 +24,10 @@ export default {
 
         // fire
         if (input.mousePointer.isDown) {
-            weapon.fireAtPointer(input.mousePointer);
+            let bullet = weapon.fireAtPointer(input.mousePointer);
+            if (bullet) bullet.health  = weapon.damage;  //set the bullet to a health
             if (!weapon.audio.isPlaying) weapon.audio.play();
-            player.play('shoot');
-            // player.scale.x = -player.scale.x;
+            player.animations.play('shoot');
         }
 
         // visual

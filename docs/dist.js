@@ -70,7 +70,7 @@
 "use strict";
 let monster = null;
 /* harmony default export */ __webpack_exports__["a"] = ({
-    create: ({ game, x = _.random(0, 600), y = 0, lives = 3 }) => {
+    create: ({ game, x = _.random(0, 600), y = 0, lives = 7 }) => {
         //visual
         monster = game.add.sprite(x, y, 'blob');
         monster.scale.setTo(lives);
@@ -17308,11 +17308,12 @@ module.exports = Phaser;
 /* harmony default export */ __webpack_exports__["a"] = (class extends Phaser.State {
     preload() {
         this.load.image('sky', './assets/sky.png');
-        this.load.image('star', './assets/star.png');
-        this.load.spritesheet('dude', './assets/dude.png', 32, 48);
+        this.load.spritesheet('projectile', './assets/projectile.png', 32, 32);
         this.load.spritesheet('blob', './assets/monster.png', 80, 80);
         this.load.audio('pop', './assets/pop.ogg');
         this.load.audio('bounce', './assets/bounce.ogg');
+        this.load.audio('shoot', './assets/shoot.wav');
+        this.load.spritesheet('cat', './assets/cat.png', 32, 32);
     }
 
     create() {
@@ -17339,7 +17340,8 @@ module.exports = Phaser;
     }
 
     render() {
-        this.weapon.debug();
+        // this.weapon.debug();
+        // this.game.debug.body(this.player)
         // this.monsterGroup.forEach(m => this.game.debug.body(m));
     }
 });
@@ -17353,9 +17355,17 @@ let player = null;
 
 /* harmony default export */ __webpack_exports__["a"] = ({
     create: ({ game }) => {
-        player = game.add.sprite(0, 0, 'dude');
+        //visual
+        player = game.add.sprite(0, 0, 'cat');
+        player.scale.setTo(2);
+        player.animations.add('shoot', _.range(7).concat([0]), 40);
+        player.events;
+        player.anchor.setTo(0.5, 0.5);
+
+        //physics
         game.physics.enable(player);
         player.body.collideWorldBounds = true;
+
         return player;
     },
     update: ({ game, weapon }) => {
@@ -17366,7 +17376,21 @@ let player = null;
         game.physics.arcade.moveToXY(player, move.x, move.y, null, move.spd);
 
         // fire
-        if (input.mousePointer.isDown) weapon.fireAtPointer(input.mousePointer);
+        if (input.mousePointer.isDown) {
+            let bullet = weapon.fireAtPointer(input.mousePointer);
+            if (bullet) bullet.health = weapon.damage; //set the bullet to a health
+            if (!weapon.audio.isPlaying) weapon.audio.play();
+            player.animations.play('shoot');
+        }
+
+        // visual
+        if (player.body.velocity.x > 0) {
+            //right
+            player.scale.x = Math.abs(player.scale.x);
+        } else if (player.body.velocity.x < 0) {
+            //left
+            player.scale.x = -Math.abs(player.scale.x);
+        }
 
         // collision
         // if (game.physics.arcade.overlap(player, monster)) {
@@ -17386,19 +17410,27 @@ let weapon = null;
 
 /* harmony default export */ __webpack_exports__["a"] = ({
     create: ({ game }) => {
-        weapon = game.add.weapon(30, 'star');
+        //visual
+        weapon = game.add.weapon(30, 'projectile');
+        weapon.addBulletAnimation('shoot', [0, 1, 2, 3], 15, true);
+
+        //game
         weapon.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;
         weapon.bulletSpeed = 1000;
-        weapon.fireRate = 120;
+        weapon.fireRate = 100;
         weapon.bulletAngleVariance = 2;
-        weapon.damage = 5;
+        weapon.damage = 12;
+
+        //audio
+        weapon.audio = game.add.audio('shoot');
+
         return weapon;
     },
     update: ({ game, mGroup, weapon }) => {
         // collision (monster & bullet)
         game.physics.arcade.overlap(mGroup, weapon.bullets, (m, b) => {
             // visual
-            b.kill();
+            b.damage(m.health); // it will auto kill() bullet upon 0 hp
             m.tint = 0xff0000;
             setTimeout(() => {
                 m.tint = 0xffffff;
