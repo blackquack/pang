@@ -1,3 +1,3 @@
-# android-pang
+# pang
 
-#### [playable demo](https://weiboi.github.io/android-pang/)
+#### [playable demo](https://weiboi.github.io/pang/)
