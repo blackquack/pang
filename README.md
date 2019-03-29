@@ -1,3 +1,3 @@
 # pang
 
-#### [playable demo](https://weiboi.github.io/pang/)
+#### [playable demo](https://blackquack.github.io/pang/)
